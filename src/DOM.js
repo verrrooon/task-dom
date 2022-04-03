@@ -1,3 +1,5 @@
+import { CompletionTriggerKind } from 'typescript';
+
 /*
   В функцию appendToBody передаются 3 параметра:
   tag - имя тега, content - содержимое тега и count - количество вставок.
@@ -5,6 +7,12 @@
   Считаем, что всегда передается тег, допускающий вставку текста в качестве своего содержимого (P, DIV, I и пр.).
 */
 export function appendToBody(tag, content, count) {
+    for (let i = 0; i < count; i++) {
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            `<${tag}>${content}</${tag}>`,
+        );
+    }
 }
 
 /*
@@ -15,6 +23,17 @@ export function appendToBody(tag, content, count) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function generateTree(childrenCount, level) {
+    document.body.insertAdjacentHTML('beforeend', '<div class="item_1"></div>');
+    for (let i = 0; i < level - 1; i++) {
+        let div = document.getElementsByClassName(`item_${i + 1}`);
+        for (let el of div)
+            for (let j = 0; j < childrenCount; j++)
+                el.insertAdjacentHTML(
+                    'beforeend',
+                    `<div class="item_${i + 2}"></div>`,
+                );
+    }
+    return document.body.firstChild;
 }
 
 /*
@@ -26,4 +45,15 @@ export function generateTree(childrenCount, level) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function replaceNodes() {
+    const generatedTree = generateTree(2, 3);
+    const div = document.getElementsByClassName('item_2');
+
+    for (let el of div) {
+        const section = document.createElement('section');
+        section.classList.add('item_2');
+        section.innerHTML = el.innerHTML;
+        generatedTree.replaceChild(section, el);
+    }
+
+    return generatedTree;
 }
